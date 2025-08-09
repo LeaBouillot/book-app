@@ -169,7 +169,7 @@ app.put('/books/:id', (req, res) => {
   };
   setTimeout(() => res.json(books[bookIndex]), 500);
 });
-
+// modifier partiellement un livre
 app.patch('/books/:id', (req, res) => {
   const bookIndex = books.findIndex((book) => book.id === req.params.id);
   if (bookIndex === -1) {
@@ -195,10 +195,7 @@ app.delete('/books/:id', (req, res) => {
   books.splice(bookIndex, 1);
   setTimeout(() => res.status(204).send(), 500);
 });
-// test
-// app.get('/', (req, res) => {
-//   res.send('Bienvenue sur le backend de Review Server');
-// });
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
