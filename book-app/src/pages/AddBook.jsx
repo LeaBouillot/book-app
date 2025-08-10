@@ -1,7 +1,22 @@
-import React from 'react';
+import { useNavigate } from 'react-router-dom'
+import { useBookContext } from '../context/BookContext'
+import BookForm from '../components/BookForm'
 
-const AddBook = () => {
-  return <div></div>;
-};
+function AddBookPage() {
+  const { dispatch } = useBookContext()
+  const navigate = useNavigate()
 
-export default AddBook;
+  const handleAddBook = (bookData) => {
+    dispatch({ type: 'ADD_BOOK', payload: bookData })
+    navigate('/') // 🔁 Retour à la page d'accueil
+  }
+
+  return (
+    <div>
+      <h2>Ajouter un livre</h2>
+      <BookForm onSubmit={handleAddBook} />
+    </div>
+  )
+}
+
+export default AddBookPage
