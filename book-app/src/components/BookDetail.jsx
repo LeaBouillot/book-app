@@ -5,69 +5,73 @@ import Loading from './Loading'
 import { renderStars, getBookEmoji } from '../utils'
 import styles from './BookDetail.module.css'
 
-const BookDetail = () => {
-  const { id } = useParams()
+const BookDetail = ({ id }) => {
   const navigate = useNavigate()
   const { dispatch } = useBookContext()
   const [book, setBook] = useState(null)
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchBook = async () => {
-      try {
-        setLoading(true)
-        const response = await fetch(`http://localhost:3000/books/${id}`)
-        if (response.ok) {
-          const data = await response.json()
-          setBook(data)
-        } else {
-          setBook(null)
-        }
-      } catch (error) {
-        console.error('Erreur lors du chargement du livre :', error)
-        setBook(null)
-      } finally {
-        setLoading(false)
+      const response = await fetch(`http://localhost:3000/books/${id}`)
+      if (response.ok) {
+        const data = await response.json()
+        setBook(data)
       }
     }
     fetchBook()
   }, [id])
 
-  const toggleAvailable = () => {
-    dispatch({ type: 'TOGGLE_AVAILABLE', payload: book.id })
-    setBook(prev => ({ ...prev, available: !prev.available }))
+  if (!book) return <Loading />
+
+  const handleEdit = () => {
+    navigate(`/edit/${id}`)
   }
 
-  if (loading) return <Loading />
+  const handleDelete = async () => {
+    const confirmed = window.confirm('Delete this book?')
+    if (!confirmed) return
 
-  if (!book) {
-    return (
-      <div className={styles.notFound}>
-        <p>Livre introuvable 📕</p>
-        <button onClick={() => navigate(-1)}>⬅ Retour</button>
-      </div>
-    )
+    try {
+      const response = await fetch(`http://localhost:3000/books/${id}`, {
+        method: 'DELETE'
+      })
+      if (!response.ok) throw new Error('Failed to delete book')
+      dispatch({ type: 'DELETE_BOOK', payload: id })
+      navigate('/')
+    } catch (error) {
+      console.error(error.message)
+    }
   }
+
 
   return (
-    <div className={styles.detail}>
-      <div className={styles.header}>
-        <span className={styles.emoji}>{getBookEmoji(book.genre)}</span>
-        <h2 className={styles.title}>{book.title}</h2>
-      </div>
-      <p className={styles.author}>par {book.author}</p>
-      <div className={styles.rating}>{renderStars(book.rating)}</div>
-      <p className={styles.description}>{book.description}</p>
-      <button
-        className={book.available ? styles.available : styles.unavailable}
-        onClick={toggleAvailable}
-      >
-        {book.available ? 'Disponible' : 'Indisponible'}
-      </button>
-      <div className={styles.back}>
-        <button onClick={() => navigate(-1)}>⬅ Retour</button>
-      </div>
-    </div>
+    <>
+      <section className={styles.detail}>
+        <div>
+          <h2>{book.title}</h2>
+          <p><strong>Author:</strong> {book.author}</p>
+          <p><strong>Genre:</strong> {book.genre}</p>
+          <p><strong>Published Date:</strong> {book.publishedDate}</p>
+          <p><strong>Rating:</strong>
+            <span className={styles.rating}>
+              {renderStars(book.rating)}
+            </span>
+          </p>
+          <p><strong>Available:</strong> {book.available ? 'Yes' : 'No'}</p>
+        </div>
+        <div>
+          {getBookEmoji(book.id)}
+        </div>
+      </section>
+      <section className={styles.buttons}>
+        <button onClick={handleEdit} className={styles.editButton}>
+          Edit Book
+        </button>
+        <button onClick={handleDelete} className={styles.deleteButton}>
+          Delete Book
+        </button>
+      </section>
+    </>
   )
 }
 
