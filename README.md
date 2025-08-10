@@ -48,7 +48,7 @@ book-app/
 │   └── package.json
 └── README.md
 
-````
+```
 
 ---
 
@@ -65,7 +65,7 @@ book-app/
    ```bash
    git clone https://github.com/LeaBouillot/book-app.git
    cd book-app
-````
+   ```
 
 2. **Installer les dépendances :**
 
@@ -96,4 +96,3 @@ book-app/
      ```bash
      npm run dev
      ```
-
