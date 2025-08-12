@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { useBookContext } from '../context/BookContext'
+import { useNavigate } from 'react-router-dom'
+import { useBookContext } from '../context/useBookContext'
 import Loading from './Loading'
 import { renderStars, getBookEmoji } from '../utils'
 import styles from './BookDetail.module.css'
